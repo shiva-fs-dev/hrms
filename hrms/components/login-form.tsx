@@ -10,7 +10,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-const handleSubmit = () => {
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
   const emailInput = document.querySelector<HTMLInputElement>("#email");
   const passwordInput = document.querySelector<HTMLInputElement>("#password");
 
@@ -41,7 +42,7 @@ const handleSubmit = () => {
         if (data.error) {
           alert(data.error);
         } else {
-          window.location.href = "/";
+          window.location.href = "/dashboard";
         }
       })
       .catch((err) => {
@@ -71,7 +72,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -95,7 +96,7 @@ export function LoginForm({
                 <Input id="password" type="password" required />
               </div>
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" onClick={handleSubmit}>
+                <Button type="submit" className="w-full">
                   Login
                 </Button>
               </div>
