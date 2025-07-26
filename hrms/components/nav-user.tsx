@@ -1,5 +1,7 @@
 "use client"
 
+import { useRouter } from "next/navigation"
+import { logout } from "@/lib/auth-api"
 import {
   BadgeCheck,
   Bell,
@@ -40,6 +42,17 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      localStorage.removeItem('token')
+      router.push('/')
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
 
   return (
     <SidebarMenu>
@@ -88,7 +101,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {}}>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
@@ -102,7 +115,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

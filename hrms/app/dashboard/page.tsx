@@ -1,4 +1,8 @@
+"use client"
+
 import { AppSidebar } from "@/components/app-sidebar"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,6 +19,14 @@ import {
 } from "@/components/ui/sidebar"
 
 export default function Page() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/')
+    }
+  }, [router])
   return (
     <SidebarProvider>
       <AppSidebar />

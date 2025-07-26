@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { login } from "@/lib/auth-api"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -22,28 +23,11 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
-    fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-      signal: controller.signal,
-      credentials: 'include'
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
+    login({ email, password })
       .then((data) => {
         clearTimeout(timeoutId);
-        if (data.error) {
-          alert(data.error);
-        } else {
-          window.location.href = "/dashboard";
-        }
+        localStorage.setItem("token", data.token);
+        window.location.href = "/dashboard";
       })
       .catch((err) => {
         clearTimeout(timeoutId);

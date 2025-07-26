@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import { useEffect, useState } from "react"
+import { getCurrentUser } from "@/lib/auth-api"
 import {
   AudioWaveform,
   BookOpen,
@@ -26,12 +28,11 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "",
+    email: "",
+    avatar: "",
   },
   teams: [
     {
@@ -157,6 +158,28 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = useState(data.user)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await getCurrentUser()
+        setUser({
+          name: `${userData.firstName} ${userData.lastName}`,
+          email: userData.email,
+          avatar: "/avatars/default.jpg"
+        })
+      } catch (error) {
+        console.error("Failed to fetch user:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUser()
+  }, [])
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -167,7 +190,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {!loading && <NavUser user={user} />}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
